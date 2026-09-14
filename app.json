@@ -1,0 +1,85 @@
+{
+  "expo": {
+    "name": "CivicLens",
+    "slug": "civiclens",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "scheme": "civiclens",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "enabled": false,
+      "checkAutomatically": "NEVER",
+      "fallbackToCacheTimeout": 0,
+      "url": "https://u.expo.dev/27f85204-a153-46a0-87b6-533aebbf3ed4"
+    },
+    "splash": {
+      "image": "./assets/icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0F172A"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.civiclens.app"
+    },
+    "android": {
+      "package": "com.civiclens.app",
+      "adaptiveIcon": {
+        "backgroundColor": "#0F172A",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "permissions": [
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.CAMERA",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.RECORD_AUDIO"
+      ],
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyDhYwiNW8DtBNOfuUlmZgZikR983ygFGlg"
+        }
+      }
+    },
+    "plugins": [
+      "expo-router",
+      "expo-updates",
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "CivicLens requires your GPS location to place civic issue pins on the shared community map."
+        }
+      ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "CivicLens uses your camera so you can capture evidence photos of potholes, garbage, and broken streetlights."
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "CivicLens accesses your photo library to let you upload photos of civic issues."
+        }
+      ]
+    ],
+    "web": {
+      "bundler": "metro",
+      "output": "static",
+      "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "27f85204-a153-46a0-87b6-533aebbf3ed4"
+      }
+    }
+  }
+}

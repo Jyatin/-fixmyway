@@ -1,0 +1,46 @@
+{
+  "name": "civiclens",
+  "version": "1.0.0",
+  "main": "expo-router/entry",
+  "dependencies": {
+    "@react-native-async-storage/async-storage": "2.2.0",
+    "expo": "~54.0.0",
+    "expo-auth-session": "~7.0.11",
+    "expo-camera": "~17.0.10",
+    "expo-constants": "~18.0.14",
+    "expo-crypto": "~15.0.9",
+    "expo-image-manipulator": "~14.0.8",
+    "expo-image-picker": "~17.0.11",
+    "expo-linear-gradient": "~15.0.8",
+    "expo-linking": "~8.0.12",
+    "expo-location": "~19.0.8",
+    "expo-router": "~6.0.24",
+    "expo-status-bar": "~3.0.9",
+    "expo-updates": "~29.0.20",
+    "expo-web-browser": "~15.0.11",
+    "firebase": "^11.4.0",
+    "lucide-react-native": "^0.475.0",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "react-native": "0.81.5",
+    "react-native-maps": "1.20.1",
+    "react-native-safe-area-context": "~5.6.0",
+    "react-native-screens": "~4.16.0",
+    "react-native-svg": "15.12.1",
+    "react-native-web": "^0.21.0"
+  },
+  "devDependencies": {
+    "@types/react": "~19.1.10",
+    "nodemailer": "^9.0.6",
+    "typescript": "^5.3.3"
+  },
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web",
+    "mirror": "scrcpy --always-on-top --window-title 'CivicLens 2.0 Live'",
+    "mail:server": "node server/mailServer.js"
+  },
+  "private": true
+}
