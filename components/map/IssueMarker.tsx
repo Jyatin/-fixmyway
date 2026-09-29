@@ -21,100 +21,90 @@ interface IssueMarkerProps {
 export const IssueMarker: React.FC<IssueMarkerProps> = ({
   issue,
   isSelected = false,
-  zoomScale = 1.0,
+  zoomScale = 1,
 }) => {
   const isResolved = issue.status === 'resolved';
   const meta = CATEGORIES[issue.category] || CATEGORIES.other;
   const isCritical = (issue.priorityScore || 50) >= 80 && !isResolved;
-
-  const pinColor = isResolved ? COLORS.success : isCritical ? COLORS.error : (meta.color || COLORS.primary);
-  const iconSize = Math.max(12, Math.min(18, Math.round(14 * Math.min(1.2, Math.max(0.85, zoomScale)))));
+  const pinColor = isResolved
+    ? COLORS.success
+    : isCritical
+      ? COLORS.error
+      : meta.color || COLORS.primary;
+  const scale = Math.min(1.18, Math.max(0.9, zoomScale));
+  const size = Math.round((isSelected ? 42 : 34) * scale);
+  const iconSize = Math.round((isSelected ? 19 : 15) * scale);
 
   const renderIcon = () => {
-    if (isResolved) {
-      return <BadgeCheck size={iconSize} color="#FFFFFF" strokeWidth={2.4} />;
-    }
+    if (isResolved) return <BadgeCheck size={iconSize} color="#FFFFFF" strokeWidth={2.1} />;
 
     switch (issue.category) {
       case 'pothole':
-        return <CircleDotDashed size={iconSize} color="#FFFFFF" strokeWidth={2.4} />;
+        return <CircleDotDashed size={iconSize} color="#FFFFFF" strokeWidth={2.1} />;
       case 'garbage':
-        return <Recycle size={iconSize} color="#FFFFFF" strokeWidth={2.2} />;
+        return <Recycle size={iconSize} color="#FFFFFF" strokeWidth={2.1} />;
       case 'streetlight':
-        return <Lightbulb size={iconSize} color="#FFFFFF" strokeWidth={2.2} />;
+        return <Lightbulb size={iconSize} color="#FFFFFF" strokeWidth={2.1} />;
       case 'road_damage':
-        return <Construction size={iconSize} color="#FFFFFF" strokeWidth={2.2} />;
+        return <Construction size={iconSize} color="#FFFFFF" strokeWidth={2.1} />;
       default:
-        return <TriangleAlert size={iconSize} color="#FFFFFF" strokeWidth={2.2} />;
+        return <TriangleAlert size={iconSize} color="#FFFFFF" strokeWidth={2.1} />;
     }
   };
 
   return (
-    <View style={styles.markerContainer}>
-      {/* Subtle Selected Outer Ring */}
-      {isSelected && <View style={styles.selectedHalo} />}
-
-      {/* Main Pin Head */}
-      <View style={[styles.pinHead, { backgroundColor: pinColor }]}>
+    <View style={styles.container}>
+      {isSelected && <View style={[styles.halo, { width: size + 22, height: size + 22, borderRadius: (size + 22) / 2 }]} />}
+      <View
+        style={[
+          styles.marker,
+          {
+            width: size,
+            height: size,
+            borderRadius: size / 2,
+            backgroundColor: pinColor,
+            borderColor: '#FFFFFF',
+          },
+          isSelected && styles.selectedMarker,
+        ]}
+      >
         {renderIcon()}
-
-        {/* Urgent Indicator */}
         {isCritical && <View style={styles.urgentDot} />}
       </View>
-
-      {/* Pin Stem Anchor */}
-      <View style={[styles.pinTail, { borderTopColor: pinColor }]} />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  markerContainer: {
+  container: {
     alignItems: 'center',
     justifyContent: 'center',
   },
-  selectedHalo: {
+  halo: {
     position: 'absolute',
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    borderWidth: 2,
-    borderColor: COLORS.primary,
-    backgroundColor: 'rgba(29, 78, 216, 0.12)',
-    top: -4,
+    backgroundColor: COLORS.primaryGlow,
+    borderWidth: 1,
+    borderColor: 'rgba(33,184,58,0.24)',
   },
-  pinHead: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
+  marker: {
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 2,
-    borderColor: '#FFFFFF',
+    borderWidth: 2.5,
     ...SHADOWS.small,
   },
-  pinTail: {
-    width: 0,
-    height: 0,
-    backgroundColor: 'transparent',
-    borderStyle: 'solid',
-    borderLeftWidth: 4,
-    borderRightWidth: 4,
-    borderTopWidth: 5,
-    borderLeftColor: 'transparent',
-    borderRightColor: 'transparent',
-    marginTop: -1,
+  selectedMarker: {
+    borderWidth: 3,
+    ...SHADOWS.medium,
   },
   urgentDot: {
     position: 'absolute',
-    top: -2,
-    right: -2,
+    top: -1,
+    right: -1,
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: '#DC2626',
+    backgroundColor: COLORS.error,
     borderWidth: 1.5,
     borderColor: '#FFFFFF',
   },
 });
-

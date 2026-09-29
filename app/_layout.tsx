@@ -1,8 +1,3 @@
-/**
- * @author Ashish Shankar <ashishshankar26>
- * @copyright (c) 2026 Ashish Shankar. All rights reserved.
- * @description CivicLens 2.0 Root Layout Architecture
- */
 import React, { useEffect } from 'react';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
@@ -19,25 +14,24 @@ export default function RootLayout() {
     registerForPushNotificationsAsync();
     checkAndApplyAppUpdate(false);
   }, []);
+
   return (
     <SafeAreaProvider>
       <AuthProvider>
         <IssuesProvider>
           <StatusBar style="dark" />
           <Stack
+            initialRouteName="splash"
             screenOptions={{
               headerShown: false,
-              contentStyle: { backgroundColor: '#F8FAFC' },
+              contentStyle: { backgroundColor: '#F7F5F1' },
+              animation: 'fade',
             }}
           >
+            <Stack.Screen name="splash" options={{ animation: 'fade' }} />
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
             <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-            <Stack.Screen
-              name="issue/[id]"
-              options={{
-                headerShown: false,
-              }}
-            />
+            <Stack.Screen name="issue/[id]" options={{ headerShown: false }} />
           </Stack>
         </IssuesProvider>
       </AuthProvider>
