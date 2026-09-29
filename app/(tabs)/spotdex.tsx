@@ -12,7 +12,7 @@ import { BadgeDetailModal } from '@/components/gamification/BadgeDetailModal';
 import { AllBadgesModal } from '@/components/gamification/AllBadgesModal';
 import { RealBadgeEmblem } from '@/components/ui/RealBadgeEmblem';
 import { AirQualityModal } from '@/components/map/AirQualityModal';
-import { COLORS, RADIUS, SPACING, SHADOWS, TYPOGRAPHY } from '@/constants/theme';
+import { COLORS, RADIUS, SHADOWS, TYPOGRAPHY } from '@/constants/theme';
 import { Wind, Droplets, ShieldCheck, Award, RefreshCw, ChevronRight, CircleDotDashed, Recycle, Construction } from 'lucide-react-native';
 
 export default function SpotdexScreen() {
@@ -26,10 +26,7 @@ export default function SpotdexScreen() {
   const [realRainfallMm, setRealRainfallMm] = useState(1838);
   const [liveAqi, setLiveAqi] = useState<AirQualityData | null>(null);
 
-  const loadReputationData = async () => {
-    const rep = await getUserReputation(user?.uid, myReports);
-    setReputation(rep);
-  };
+  const loadReputationData = async () => setReputation(await getUserReputation(user?.uid, myReports));
 
   const loadRealTelemetry = async () => {
     try {
@@ -44,10 +41,7 @@ export default function SpotdexScreen() {
     }
   };
 
-  useEffect(() => {
-    loadReputationData();
-    loadRealTelemetry();
-  }, [user, myReports, issues]);
+  useEffect(() => { loadReputationData(); loadRealTelemetry(); }, [user, myReports, issues]);
 
   const activeIssues = issues.filter((i) => i.status === 'active');
   const resolvedCount = issues.filter((i) => i.status === 'resolved').length;
@@ -65,11 +59,7 @@ export default function SpotdexScreen() {
 
   return (
     <View style={[styles.container, { paddingTop: insets.top + (Platform.OS === 'ios' ? 4 : 8) }]}>
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: insets.bottom + 100 }}
-        refreshControl={<RefreshControl refreshing={isLoading} onRefresh={refreshIssues} tintColor={COLORS.primary} />}
-      >
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: insets.bottom + 100 }} refreshControl={<RefreshControl refreshing={isLoading} onRefresh={refreshIssues} tintColor={COLORS.primary} />}>
         <View style={styles.header}>
           <Text style={styles.eyebrow}>SPOTDEX</Text>
           <Text style={styles.title}>Your city's{`\n`}health at a glance.</Text>
@@ -77,90 +67,30 @@ export default function SpotdexScreen() {
         </View>
 
         <View style={styles.healthCard}>
-          <View style={styles.healthTop}>
-            <View>
-              <Text style={styles.cardLabel}>CITY HEALTH SCORE</Text>
-              <View style={styles.scoreLine}>
-                <Text style={styles.score}>{healthScore}%</Text>
-                <Text style={styles.scoreStatus}>{healthScore > 75 ? 'Healthy area' : healthScore > 50 ? 'Moderate risk' : 'Needs attention'}</Text>
-              </View>
-            </View>
-            <Text style={styles.fixedRate}>{resolutionRate}%{`\n`}fixed</Text>
-          </View>
+          <View style={styles.healthTop}><View><Text style={styles.cardLabel}>CITY HEALTH SCORE</Text><View style={styles.scoreLine}><Text style={styles.score}>{healthScore}%</Text><Text style={styles.scoreStatus}>{healthScore > 75 ? 'Healthy area' : healthScore > 50 ? 'Moderate risk' : 'Needs attention'}</Text></View></View><Text style={styles.fixedRate}>{resolutionRate}%{`\n`}fixed</Text></View>
           <View style={styles.progressTrack}><View style={[styles.progressFill, { width: `${healthScore}%` }]} /></View>
-          <View style={styles.healthStats}>
-            <View><Text style={styles.statNumber}>{activeIssues.length}</Text><Text style={styles.statLabel}>needs attention</Text></View>
-            <View><Text style={styles.statNumber}>{verifiedCount}</Text><Text style={styles.statLabel}>verified</Text></View>
-            <View><Text style={[styles.statNumber, { color: COLORS.success }]}>{resolvedCount}</Text><Text style={styles.statLabel}>recently fixed</Text></View>
-          </View>
+          <View style={styles.healthStats}><View><Text style={styles.statNumber}>{activeIssues.length}</Text><Text style={styles.statLabel}>needs attention</Text></View><View><Text style={styles.statNumber}>{verifiedCount}</Text><Text style={styles.statLabel}>verified</Text></View><View><Text style={[styles.statNumber, { color: COLORS.success }]}>{resolvedCount}</Text><Text style={styles.statLabel}>recently fixed</Text></View></View>
         </View>
 
         <TouchableOpacity style={styles.card} activeOpacity={0.92} onPress={() => setAqiModalVisible(true)}>
-          <View style={styles.cardHeader}>
-            <View style={styles.cardHeaderLeft}><Wind size={19} color={COLORS.primary} strokeWidth={1.7} /><Text style={styles.cardLabel}>AIR QUALITY</Text></View>
-            <ChevronRight size={18} color={COLORS.textMuted} />
-          </View>
+          <View style={styles.cardHeader}><View style={styles.cardHeaderLeft}><Wind size={19} color={COLORS.primary} strokeWidth={1.7} /><Text style={styles.cardLabel}>AIR QUALITY</Text></View><ChevronRight size={18} color={COLORS.textMuted} /></View>
           <Text style={styles.metricValue}>{liveAqi?.aqi || 139}</Text>
           <Text style={styles.metricDescription}>{liveAqi?.label || 'Unhealthy for sensitive groups'}</Text>
-          <View style={styles.aqiScale}>
-            <LinearGradient colors={['#62C47A', '#E9C35A', '#E79B53', '#D95C55']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={styles.aqiGradient} />
-            <View style={[styles.aqiThumb, { left: `${Math.min(96, Math.max(4, ((liveAqi?.aqi || 139) / 250) * 100))}%` }]} />
-          </View>
-          <View style={styles.aqiLabels}><Text>Good</Text><Text>Unhealthy</Text></View>
-          <View style={styles.pollutants}>
-            <View><Text style={styles.pollutantLabel}>PM2.5</Text><Text style={styles.pollutantValue}>{liveAqi?.pm2_5 || 28.8} µg/m³</Text></View>
-            <View><Text style={styles.pollutantLabel}>PM10</Text><Text style={styles.pollutantValue}>{liveAqi?.pm10 || 29.7} µg/m³</Text></View>
-          </View>
+          <View style={styles.aqiScale}><LinearGradient colors={['#62C47A', '#E9C35A', '#E79B53', '#D95C55']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={styles.aqiGradient} /><View style={[styles.aqiThumb, { left: `${Math.min(96, Math.max(4, ((liveAqi?.aqi || 139) / 250) * 100))}%` }]} /></View>
+          <View style={styles.aqiLabels}><Text style={styles.scaleText}>Good</Text><Text style={styles.scaleText}>Unhealthy</Text></View>
+          <View style={styles.pollutants}><View><Text style={styles.pollutantLabel}>PM2.5</Text><Text style={styles.pollutantValue}>{liveAqi?.pm2_5 || 28.8} µg/m³</Text></View><View><Text style={styles.pollutantLabel}>PM10</Text><Text style={styles.pollutantValue}>{liveAqi?.pm10 || 29.7} µg/m³</Text></View></View>
           <Text style={styles.linkText}>View air quality details →</Text>
         </TouchableOpacity>
 
-        <View style={styles.twoColumn}>
-          <View style={styles.smallCard}>
-            <View style={styles.smallHeader}><Droplets size={17} color={COLORS.blue} /><Text style={styles.cardLabel}>RAINFALL</Text></View>
-            <Text style={styles.smallValue}>{Math.round(realRainfallMm).toLocaleString()} mm</Text>
-            <Text style={styles.smallDescription}>{Math.round((realRainfallMm / 1200) * 100)}% of seasonal threshold</Text>
-            <View style={styles.softIndicator}><View style={[styles.softIndicatorFill, { width: `${Math.min(100, (realRainfallMm / 1200) * 100)}%` }]} /></View>
-            <Text style={styles.riskText}>Elevated pothole risk</Text>
-          </View>
+        <View style={styles.twoColumn}><View style={styles.smallCard}><View style={styles.smallHeader}><Droplets size={17} color={COLORS.blue} /><Text style={styles.cardLabel}>RAINFALL</Text></View><Text style={styles.smallValue}>{Math.round(realRainfallMm).toLocaleString()} mm</Text><Text style={styles.smallDescription}>{Math.round((realRainfallMm / 1200) * 100)}% of seasonal threshold</Text><View style={styles.softIndicator}><View style={[styles.softIndicatorFill, { width: `${Math.min(100, (realRainfallMm / 1200) * 100)}%` }]} /></View><Text style={styles.riskText}>Elevated pothole risk</Text></View><View style={styles.smallCard}><View style={styles.smallHeader}><ShieldCheck size={17} color={COLORS.success} /><Text style={styles.cardLabel}>COMMUNITY TRUST</Text></View><Text style={[styles.smallValue, { color: COLORS.success }]}>{reputation?.trustScore || 60}%</Text><Text style={styles.smallDescription}>{reputation?.trustTier || 'New Scout'}</Text><View style={styles.trustRow}><View style={styles.trustDot} /><Text style={styles.riskText}>High reliability</Text></View></View></View>
 
-          <View style={styles.smallCard}>
-            <View style={styles.smallHeader}><ShieldCheck size={17} color={COLORS.success} /><Text style={styles.cardLabel}>COMMUNITY TRUST</Text></View>
-            <Text style={[styles.smallValue, { color: COLORS.success }]}>{reputation?.trustScore || 60}%</Text>
-            <Text style={styles.smallDescription}>{reputation?.trustTier || 'New Scout'}</Text>
-            <View style={styles.trustRow}><View style={styles.trustDot} /><Text style={styles.riskText}>High reliability</Text></View>
-          </View>
-        </View>
+        <View style={styles.card}><View style={styles.cardHeader}><View><Text style={styles.cardLabel}>WHAT WE'RE SEEING</Text><Text style={styles.sectionTitle}>Around your area</Text></View><TouchableOpacity onPress={loadRealTelemetry}><RefreshCw size={18} color={COLORS.textMuted} /></TouchableOpacity></View><View style={styles.categorySummary}><View style={styles.categoryItem}><View style={[styles.categoryIcon, { backgroundColor: COLORS.potholeLight }]}><CircleDotDashed size={18} color={COLORS.pothole} /></View><Text style={styles.categoryNumber}>{potholes}</Text><Text style={styles.categoryName}>Potholes</Text></View><View style={styles.categoryItem}><View style={[styles.categoryIcon, { backgroundColor: COLORS.garbageLight }]}><Recycle size={18} color={COLORS.garbage} /></View><Text style={styles.categoryNumber}>{waste}</Text><Text style={styles.categoryName}>Waste</Text></View><View style={styles.categoryItem}><View style={[styles.categoryIcon, { backgroundColor: COLORS.roadDamageLight }]}><Construction size={18} color={COLORS.roadDamage} /></View><Text style={styles.categoryNumber}>{damage}</Text><Text style={styles.categoryName}>Damage</Text></View></View></View>
 
-        <View style={styles.card}>
-          <View style={styles.cardHeader}>
-            <View><Text style={styles.cardLabel}>WHAT WE'RE SEEING</Text><Text style={styles.sectionTitle}>Around your area</Text></View>
-            <TouchableOpacity onPress={loadRealTelemetry}><RefreshCw size={18} color={COLORS.textMuted} /></TouchableOpacity>
-          </View>
-          <View style={styles.categorySummary}>
-            <View style={styles.categoryItem}><View style={[styles.categoryIcon, { backgroundColor: COLORS.potholeLight }]}><CircleDotDashed size={18} color={COLORS.pothole} /></View><Text style={styles.categoryNumber}>{potholes}</Text><Text style={styles.categoryName}>Potholes</Text></View>
-            <View style={styles.categoryItem}><View style={[styles.categoryIcon, { backgroundColor: COLORS.garbageLight }]}><Recycle size={18} color={COLORS.garbage} /></View><Text style={styles.categoryNumber}>{waste}</Text><Text style={styles.categoryName}>Waste</Text></View>
-            <View style={styles.categoryItem}><View style={[styles.categoryIcon, { backgroundColor: COLORS.roadDamageLight }]}><Construction size={18} color={COLORS.roadDamage} /></View><Text style={styles.categoryNumber}>{damage}</Text><Text style={styles.categoryName}>Damage</Text></View>
-          </View>
-        </View>
-
-        <View style={styles.card}>
-          <View style={styles.cardHeader}>
-            <View><Text style={styles.cardLabel}>YOUR CIVIC JOURNEY</Text><Text style={styles.sectionTitle}>{unlockedBadges.length} / {totalBadges} milestones</Text></View>
-            <TouchableOpacity onPress={() => setAllBadgesModalVisible(true)}><ChevronRight size={19} color={COLORS.textMuted} /></TouchableOpacity>
-          </View>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.badgesRow}>
-            {displayBadges.slice(0, 6).map((badge) => (
-              <TouchableOpacity key={badge.id} style={styles.badgeItem} onPress={() => setSelectedBadge(badge)}>
-                <RealBadgeEmblem id={badge.id} size={54} isUnlocked={badge.isUnlocked} />
-                <Text style={styles.badgeTitle} numberOfLines={1}>{badge.title}</Text>
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
-        </View>
+        <View style={styles.card}><View style={styles.cardHeader}><View><Text style={styles.cardLabel}>YOUR CIVIC JOURNEY</Text><Text style={styles.sectionTitle}>{unlockedBadges.length} / {totalBadges} milestones</Text></View><TouchableOpacity onPress={() => setAllBadgesModalVisible(true)}><ChevronRight size={19} color={COLORS.textMuted} /></TouchableOpacity></View><ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.badgesRow}>{displayBadges.slice(0, 6).map((badge) => <TouchableOpacity key={badge.id} style={styles.badgeItem} onPress={() => setSelectedBadge(badge)}><RealBadgeEmblem id={badge.id} size={54} isUnlocked={badge.isUnlocked} /><Text style={styles.badgeTitle} numberOfLines={1}>{badge.title}</Text></TouchableOpacity>)}</ScrollView></View>
       </ScrollView>
 
       <BadgeDetailModal badge={selectedBadge} visible={Boolean(selectedBadge)} onClose={() => setSelectedBadge(null)} />
-      <AllBadgesModal visible={allBadgesModalVisible} badges={reputation?.badges || []} onClose={() => setAllBadgesModalVisible(false)} onSelectBadge={setSelectedBadge} />
+      <AllBadgesModal visible={allBadgesModalVisible} badges={reputation?.badges || []} onClose={() => setAllBadgesModalVisible(false)} />
       <AirQualityModal data={liveAqi} visible={aqiModalVisible} onClose={() => setAqiModalVisible(false)} />
     </View>
   );
@@ -193,7 +123,7 @@ const styles = StyleSheet.create({
   aqiGradient: { position: 'absolute', left: 0, right: 0, top: 0, bottom: 0, borderRadius: 4 },
   aqiThumb: { position: 'absolute', top: -4, marginLeft: -6, width: 16, height: 16, borderRadius: 8, backgroundColor: COLORS.textPrimary, borderWidth: 3, borderColor: COLORS.surface },
   aqiLabels: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 8 },
-  aqiLabels: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 8 },
+  scaleText: { color: COLORS.textMuted, fontSize: 10.5 },
   pollutants: { flexDirection: 'row', gap: 42, marginTop: 20, paddingTop: 17, borderTopWidth: 1, borderTopColor: COLORS.borderLight },
   pollutantLabel: { color: COLORS.textMuted, fontSize: 11, marginBottom: 4 },
   pollutantValue: { color: COLORS.textPrimary, fontSize: 13, fontWeight: '500' },
