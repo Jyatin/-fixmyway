@@ -1,7 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { View, StyleSheet, Platform, Text } from 'react-native';
 import MapView, { Marker, Circle, PROVIDER_GOOGLE, Region, MapType } from 'react-native-maps';
-import Constants, { ExecutionEnvironment } from 'expo-constants';
 import { CivicIssue } from '@/types/issue';
 import { IssueMarker } from './IssueMarker';
 import { DEFAULT_REGION } from '@/constants/mockData';
@@ -23,19 +22,36 @@ interface CivicMapViewProps {
   onSelectHotspot?: (hotspot: PotholePredictionHotspot) => void;
 }
 
-const PREMIUM_MAP_STYLE = [
-  { elementType: 'geometry', stylers: [{ color: '#F1F3EE' }] },
-  { elementType: 'labels.text.fill', stylers: [{ color: '#777C76' }] },
-  { elementType: 'labels.text.stroke', stylers: [{ color: '#F1F3EE' }, { weight: 2 }] },
-  { featureType: 'administrative', elementType: 'geometry.stroke', stylers: [{ color: '#D9DDD6' }] },
-  { featureType: 'landscape.natural', elementType: 'geometry', stylers: [{ color: '#E6F0E5' }] },
-  { featureType: 'poi', stylers: [{ visibility: 'off' }] },
+/**
+ * Real map styling — this is still the live Google/Apple map canvas and
+ * real road/building geometry, not an illustrated or generated background.
+ * The styling only reduces visual noise so the FixMyWay UI can sit above it.
+ */
+const REALISTIC_LIGHT_MAP_STYLE = [
+  { elementType: 'geometry', stylers: [{ color: '#F3F2EE' }] },
+  { elementType: 'labels.icon', stylers: [{ visibility: 'off' }] },
+  { elementType: 'labels.text.fill', stylers: [{ color: '#6E746F' }] },
+  { elementType: 'labels.text.stroke', stylers: [{ color: '#F3F2EE' }, { weight: 2 }] },
+  { featureType: 'administrative', elementType: 'geometry.stroke', stylers: [{ color: '#D4D6D1' }] },
+  { featureType: 'administrative.land_parcel', elementType: 'geometry.stroke', stylers: [{ color: '#E4E3DE' }] },
+  { featureType: 'landscape.natural', elementType: 'geometry', stylers: [{ color: '#E5EFE3' }] },
+  { featureType: 'landscape.natural.landcover', elementType: 'geometry', stylers: [{ color: '#E8F0E5' }] },
+  { featureType: 'poi', elementType: 'geometry', stylers: [{ color: '#E7ECE4' }] },
+  { featureType: 'poi', elementType: 'labels.text.fill', stylers: [{ color: '#8A918A' }] },
+  { featureType: 'poi.business', elementType: 'labels.text.fill', stylers: [{ color: '#8A918A' }] },
   { featureType: 'road', elementType: 'geometry', stylers: [{ color: '#FFFFFF' }] },
-  { featureType: 'road', elementType: 'geometry.stroke', stylers: [{ color: '#E5E7E2' }] },
-  { featureType: 'road.highway', elementType: 'geometry', stylers: [{ color: '#F6F4EF' }] },
-  { featureType: 'road.highway', elementType: 'geometry.stroke', stylers: [{ color: '#E2E3DE' }] },
-  { featureType: 'transit', stylers: [{ visibility: 'off' }] },
-  { featureType: 'water', elementType: 'geometry', stylers: [{ color: '#DCE9E8' }] },
+  { featureType: 'road', elementType: 'geometry.stroke', stylers: [{ color: '#E1E1DC' }] },
+  { featureType: 'road', elementType: 'labels.text.fill', stylers: [{ color: '#6F746F' }] },
+  { featureType: 'road.arterial', elementType: 'geometry', stylers: [{ color: '#FBFAF7' }] },
+  { featureType: 'road.arterial', elementType: 'geometry.stroke', stylers: [{ color: '#DCDDD7' }] },
+  { featureType: 'road.highway', elementType: 'geometry', stylers: [{ color: '#F4E7C7' }] },
+  { featureType: 'road.highway', elementType: 'geometry.stroke', stylers: [{ color: '#DECDA6' }] },
+  { featureType: 'road.highway', elementType: 'labels.text.fill', stylers: [{ color: '#6C6E68' }] },
+  { featureType: 'road.local', elementType: 'geometry', stylers: [{ color: '#FFFFFF' }] },
+  { featureType: 'transit', elementType: 'geometry', stylers: [{ color: '#E8E8E2' }] },
+  { featureType: 'transit', elementType: 'labels.text.fill', stylers: [{ color: '#858A85' }] },
+  { featureType: 'water', elementType: 'geometry', stylers: [{ color: '#D9E7E7' }] },
+  { featureType: 'water', elementType: 'labels.text.fill', stylers: [{ color: '#7D9291' }] },
 ];
 
 export const CivicMapView: React.FC<CivicMapViewProps> = ({
@@ -65,11 +81,6 @@ export const CivicMapView: React.FC<CivicMapViewProps> = ({
     }
     loadPredictiveHotspots();
   }, [userCoords?.latitude, userCoords?.longitude, issues.length]);
-
-  const isExpoGo =
-    Constants.executionEnvironment === ExecutionEnvironment.StoreClient ||
-    Constants.appOwnership === 'expo';
-  void isExpoGo;
 
   const initialRegion: Region = {
     latitude: userCoords?.latitude || DEFAULT_REGION.latitude,
@@ -135,17 +146,24 @@ export const CivicMapView: React.FC<CivicMapViewProps> = ({
       <MapView
         ref={mapRef}
         style={styles.map}
+        // Android uses the configured Google Maps provider. iOS keeps its
+        // native provider unless Google Maps is explicitly configured there.
         provider={Platform.OS === 'android' ? PROVIDER_GOOGLE : undefined}
         initialRegion={initialRegion}
         mapType={mapType}
-        customMapStyle={mapType === 'standard' ? PREMIUM_MAP_STYLE : undefined}
+        customMapStyle={mapType === 'standard' ? REALISTIC_LIGHT_MAP_STYLE : undefined}
         onRegionChangeComplete={handleRegionChangeComplete}
         showsUserLocation={Boolean(userCoords)}
         showsMyLocationButton={false}
         showsCompass={false}
         showsScale={false}
+        showsBuildings
+        showsTraffic={false}
+        showsIndoors={false}
         toolbarEnabled={false}
         moveOnMarkerPress={false}
+        pitchEnabled
+        rotateEnabled
       >
         {showHotspots && potholeAnalytics?.hotspots.map((hs) => {
           const isCritical = hs.riskLevel === 'CRITICAL';
