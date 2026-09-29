@@ -5,7 +5,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { COLORS, RADIUS, SHADOWS } from '@/constants/theme';
 import {
   Compass,
-  Layers,
+  Layers3,
   Plus,
   ScrollText,
   CircleUserRound,
@@ -13,7 +13,7 @@ import {
 
 export default function FloatingTabsLayout() {
   const insets = useSafeAreaInsets();
-  const bottomOffset = insets.bottom > 0 ? insets.bottom + 4 : 12;
+  const bottomOffset = Math.max(insets.bottom + 8, 14);
 
   return (
     <Tabs
@@ -24,31 +24,31 @@ export default function FloatingTabsLayout() {
         tabBarStyle: {
           position: 'absolute',
           bottom: bottomOffset,
-          left: 18,
-          right: 18,
-          backgroundColor: 'rgba(255, 255, 255, 0.92)',
-          borderRadius: RADIUS.full,
-          height: 62,
-          paddingBottom: 0,
-          paddingHorizontal: 8,
-          borderWidth: 1,
-          borderColor: 'rgba(255, 255, 255, 0.80)',
-          shadowColor: '#000',
-          shadowOffset: { width: 0, height: 10 },
-          shadowOpacity: 0.12,
+          left: 16,
+          right: 16,
+          height: 72,
+          paddingTop: 7,
+          paddingBottom: 6,
+          paddingHorizontal: 7,
+          backgroundColor: 'rgba(255,255,255,0.96)',
+          borderRadius: RADIUS.lg,
+          borderWidth: 0,
+          shadowColor: '#000000',
+          shadowOffset: { width: 0, height: 7 },
+          shadowOpacity: 0.055,
           shadowRadius: 20,
-          elevation: 10,
+          elevation: 7,
         },
         tabBarItemStyle: {
-          paddingVertical: 4,
+          minHeight: 58,
           justifyContent: 'center',
           alignItems: 'center',
         },
         tabBarLabelStyle: {
           fontSize: 10,
-          fontWeight: '700',
-          marginTop: 1,
-          letterSpacing: -0.2,
+          fontWeight: '500',
+          marginTop: 2,
+          letterSpacing: 0.1,
         },
       }}
     >
@@ -57,9 +57,9 @@ export default function FloatingTabsLayout() {
         options={{
           title: 'Map',
           tabBarIcon: ({ color, focused }) => (
-            <View style={[styles.tabIconContainer, focused && styles.tabIconActive]}>
-              <Compass size={20} color={focused ? COLORS.primary : color} strokeWidth={focused ? 2.4 : 1.8} />
-              {focused && <View style={styles.activeIndicatorDot} />}
+            <View style={styles.iconBox}>
+              <Compass size={21} color={focused ? COLORS.primary : color} strokeWidth={focused ? 2.1 : 1.7} />
+              {focused && <View style={styles.activeDot} />}
             </View>
           ),
         }}
@@ -70,9 +70,9 @@ export default function FloatingTabsLayout() {
         options={{
           title: 'Spotdex',
           tabBarIcon: ({ color, focused }) => (
-            <View style={[styles.tabIconContainer, focused && styles.tabIconActive]}>
-              <Layers size={19} color={focused ? COLORS.primary : color} strokeWidth={focused ? 2.4 : 1.8} />
-              {focused && <View style={styles.activeIndicatorDot} />}
+            <View style={styles.iconBox}>
+              <Layers3 size={20} color={focused ? COLORS.primary : color} strokeWidth={focused ? 2.1 : 1.7} />
+              {focused && <View style={styles.activeDot} />}
             </View>
           ),
         }}
@@ -81,20 +81,15 @@ export default function FloatingTabsLayout() {
       <Tabs.Screen
         name="report"
         options={{
-          title: 'Spot',
-          tabBarIcon: ({ focused }) => (
-            <View style={styles.plusBtnOuter}>
-              <View style={[styles.inlinePlusBtn, focused && styles.inlinePlusBtnActive]}>
-                <Plus size={20} color="#FFFFFF" strokeWidth={3} />
-              </View>
+          title: '',
+          tabBarIcon: () => (
+            <View style={styles.plusButton}>
+              <Plus size={28} color="#FFFFFF" strokeWidth={2.2} />
             </View>
           ),
-          tabBarLabelStyle: {
-            fontSize: 10,
-            fontWeight: '900',
-            marginTop: 2,
-            color: COLORS.primary,
-            letterSpacing: -0.1,
+          tabBarItemStyle: {
+            justifyContent: 'center',
+            alignItems: 'center',
           },
         }}
       />
@@ -104,9 +99,9 @@ export default function FloatingTabsLayout() {
         options={{
           title: 'Logbook',
           tabBarIcon: ({ color, focused }) => (
-            <View style={[styles.tabIconContainer, focused && styles.tabIconActive]}>
-              <ScrollText size={19} color={focused ? COLORS.primary : color} strokeWidth={focused ? 2.4 : 1.8} />
-              {focused && <View style={styles.activeIndicatorDot} />}
+            <View style={styles.iconBox}>
+              <ScrollText size={20} color={focused ? COLORS.primary : color} strokeWidth={focused ? 2.1 : 1.7} />
+              {focused && <View style={styles.activeDot} />}
             </View>
           ),
         }}
@@ -117,60 +112,40 @@ export default function FloatingTabsLayout() {
         options={{
           title: 'You',
           tabBarIcon: ({ color, focused }) => (
-            <View style={[styles.tabIconContainer, focused && styles.tabIconActive]}>
-              <CircleUserRound size={20} color={focused ? COLORS.primary : color} strokeWidth={focused ? 2.4 : 1.8} />
-              {focused && <View style={styles.activeIndicatorDot} />}
+            <View style={styles.iconBox}>
+              <CircleUserRound size={21} color={focused ? COLORS.primary : color} strokeWidth={focused ? 2.1 : 1.7} />
+              {focused && <View style={styles.activeDot} />}
             </View>
           ),
         }}
       />
 
-      {/* Hidden legacy tab */}
-      <Tabs.Screen
-        name="leaderboard"
-        options={{
-          href: null,
-        }}
-      />
+      <Tabs.Screen name="leaderboard" options={{ href: null }} />
     </Tabs>
   );
 }
 
 const styles = StyleSheet.create({
-  tabIconContainer: {
+  iconBox: {
+    height: 31,
     alignItems: 'center',
     justifyContent: 'center',
-    height: 26,
   },
-  tabIconActive: {
-    transform: [{ scale: 1.05 }],
-  },
-  activeIndicatorDot: {
+  activeDot: {
     width: 4,
     height: 4,
     borderRadius: 2,
     backgroundColor: COLORS.primary,
-    marginTop: 3,
+    marginTop: 4,
   },
-  plusBtnOuter: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: COLORS.primaryLight,
-  },
-  inlinePlusBtn: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+  plusButton: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
     backgroundColor: COLORS.primary,
     alignItems: 'center',
     justifyContent: 'center',
-    ...SHADOWS.medium,
-  },
-  inlinePlusBtnActive: {
-    backgroundColor: COLORS.primaryDark,
-    transform: [{ scale: 1.06 }],
+    marginTop: -12,
+    ...SHADOWS.button,
   },
 });
