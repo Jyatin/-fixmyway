@@ -1,12 +1,5 @@
 import React from 'react';
-import {
-  View,
-  Text,
-  Image,
-  StyleSheet,
-  TouchableOpacity,
-  Dimensions,
-} from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
 import { CivicIssue } from '@/types/issue';
 import { StatusBadge } from '../ui/StatusBadge';
 import { CategoryBadge } from '../ui/CategoryBadge';
@@ -26,20 +19,9 @@ interface CivicIssueCardProps {
   onConfirm?: (issueId: string) => void;
 }
 
-export function CivicIssueCard({
-  issue,
-  userCoords,
-  onPress,
-  variant = 'standard',
-  onConfirm,
-}: CivicIssueCardProps) {
+export function CivicIssueCard({ issue, userCoords, onPress, variant = 'standard' }: CivicIssueCardProps) {
   const distance = userCoords
-    ? calculateDistance(
-        userCoords.latitude,
-        userCoords.longitude,
-        issue.latitude,
-        issue.longitude
-      )
+    ? calculateDistance(userCoords.latitude, userCoords.longitude, issue.latitude, issue.longitude)
     : null;
 
   const priorityScore = issue.priorityScore || calculatePriorityScore(
@@ -51,60 +33,42 @@ export function CivicIssueCard({
   ).total;
 
   const isUrgent = issue.severity === 'high' || priorityScore >= 75;
+  const title = issue.description || `${issue.category.replace('_', ' ')} detected`;
+  const location = issue.locationName || `${issue.latitude.toFixed(3)}, ${issue.longitude.toFixed(3)}`;
 
   if (variant === 'mapOverlay') {
     return (
-      <TouchableOpacity
-        style={styles.mapOverlayCard}
-        onPress={() => onPress(issue.id)}
-        activeOpacity={0.9}
-      >
+      <TouchableOpacity style={styles.mapCard} onPress={() => onPress(issue.id)} activeOpacity={0.94}>
         <Image
-          source={{
-            uri:
-              issue.imageUrl ||
-              'https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?w=600&auto=format&fit=crop&q=80',
-          }}
-          style={styles.mapOverlayImage}
+          source={{ uri: issue.imageUrl || 'https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?w=600&auto=format&fit=crop&q=80' }}
+          style={styles.mapImage}
           resizeMode="cover"
         />
-
-        <View style={styles.mapOverlayBody}>
+        <View style={styles.mapBody}>
           <View style={styles.badgeRow}>
             <CategoryBadge category={issue.category} size="sm" />
             <StatusBadge status={issue.status} size="sm" />
             {isUrgent && (
               <View style={styles.urgentPill}>
                 <Flame size={10} color={COLORS.error} />
-                <Text style={styles.urgentPillText}>Urgent</Text>
+                <Text style={styles.urgentText}>Urgent</Text>
               </View>
             )}
           </View>
-
-          <Text style={styles.mapOverlayTitle} numberOfLines={1}>
-            {issue.description || `${issue.category.replace('_', ' ')} detected`}
-          </Text>
-
+          <Text style={styles.mapTitle} numberOfLines={2}>{title}</Text>
           <View style={styles.metaRow}>
-            <MapPin size={11} color={COLORS.textMuted} />
-            <Text style={styles.metaText} numberOfLines={1}>
-              {issue.locationName || `${issue.latitude.toFixed(3)}, ${issue.longitude.toFixed(3)}`}
-            </Text>
-            {distance !== null && (
-              <Text style={styles.metaDistance}>• {formatDistance(distance)}</Text>
-            )}
+            <MapPin size={12} color={COLORS.textMuted} />
+            <Text style={styles.meta} numberOfLines={1}>{location}</Text>
+            {distance !== null && <Text style={styles.distance}>• {formatDistance(distance)}</Text>}
           </View>
-
-          <View style={styles.footerRow}>
-            <View style={styles.confirmBadge}>
-              <Users size={11} color={COLORS.primary} />
-              <Text style={styles.confirmBadgeText}>
-                {issue.confirmationCount || 0} confirmations
-              </Text>
+          <View style={styles.footer}>
+            <View style={styles.confirmations}>
+              <Users size={12} color={COLORS.primary} />
+              <Text style={styles.confirmText}>{issue.confirmationCount || 0} confirmations</Text>
             </View>
-            <View style={styles.actionLink}>
-              <Text style={styles.actionLinkText}>Details</Text>
-              <ChevronRight size={13} color={COLORS.primary} />
+            <View style={styles.detailsLink}>
+              <Text style={styles.detailsText}>View report</Text>
+              <ChevronRight size={14} color={COLORS.primary} />
             </View>
           </View>
         </View>
@@ -114,101 +78,53 @@ export function CivicIssueCard({
 
   if (variant === 'featured') {
     return (
-      <TouchableOpacity
-        style={styles.featuredCard}
-        onPress={() => onPress(issue.id)}
-        activeOpacity={0.9}
-      >
-        <View style={styles.featuredImageContainer}>
-          <Image
-            source={{
-              uri:
-                issue.imageUrl ||
-                'https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?w=600&auto=format&fit=crop&q=80',
-            }}
-            style={styles.featuredImage}
-            resizeMode="cover"
-          />
-          <View style={styles.imageOverlayGradient} />
-          
-          <View style={styles.featuredTopRow}>
+      <TouchableOpacity style={styles.featuredCard} onPress={() => onPress(issue.id)} activeOpacity={0.92}>
+        <Image
+          source={{ uri: issue.imageUrl || 'https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?w=600&auto=format&fit=crop&q=80' }}
+          style={styles.featuredImage}
+          resizeMode="cover"
+        />
+        <View style={styles.featuredBody}>
+          <View style={styles.badgeRow}>
             <CategoryBadge category={issue.category} size="sm" />
             <StatusBadge status={issue.status} size="sm" />
           </View>
-
-          {distance !== null && (
-            <View style={styles.featuredDistancePill}>
-              <MapPin size={10} color="#FFFFFF" />
-              <Text style={styles.featuredDistanceText}>{formatDistance(distance)}</Text>
+          <Text style={styles.featuredTitle} numberOfLines={2}>{title}</Text>
+          <Text style={styles.featuredLocation} numberOfLines={1}>{location}</Text>
+          <View style={styles.footer}>
+            <Text style={styles.time}>{formatRelativeTime(issue.createdAt)}</Text>
+            <View style={styles.confirmations}>
+              <Users size={12} color={COLORS.primary} />
+              <Text style={styles.confirmText}>{issue.confirmationCount || 0}</Text>
             </View>
-          )}
-        </View>
-
-        <View style={styles.featuredContent}>
-          <Text style={styles.featuredTitle} numberOfLines={1}>
-            {issue.description || `${issue.category.replace('_', ' ')} detected`}
-          </Text>
-
-          <Text style={styles.featuredLocation} numberOfLines={1}>
-            {issue.locationName || 'Local Roadway'}
-          </Text>
-
-          <View style={styles.featuredBottomRow}>
-            <View style={styles.confirmBadge}>
-              <Users size={11} color={COLORS.primary} />
-              <Text style={styles.confirmBadgeText}>
-                {issue.confirmationCount || 0} confirmations
-              </Text>
-            </View>
-            <Text style={styles.timeText}>{formatRelativeTime(issue.createdAt)}</Text>
           </View>
         </View>
       </TouchableOpacity>
     );
   }
 
-  // Standard Card
   return (
-    <TouchableOpacity
-      style={styles.standardCard}
-      onPress={() => onPress(issue.id)}
-      activeOpacity={0.88}
-    >
+    <TouchableOpacity style={styles.standardCard} onPress={() => onPress(issue.id)} activeOpacity={0.9}>
       <Image
-        source={{
-          uri:
-            issue.imageUrl ||
-            'https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?w=600&auto=format&fit=crop&q=80',
-        }}
+        source={{ uri: issue.imageUrl || 'https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?w=600&auto=format&fit=crop&q=80' }}
         style={styles.standardImage}
         resizeMode="cover"
       />
-
-      <View style={styles.standardContent}>
+      <View style={styles.standardBody}>
         <View style={styles.badgeRow}>
           <CategoryBadge category={issue.category} size="sm" />
           <StatusBadge status={issue.status} size="sm" />
         </View>
-
-        <Text style={styles.standardTitle} numberOfLines={1}>
-          {issue.description || `${issue.category.replace('_', ' ')} detected`}
-        </Text>
-
+        <Text style={styles.standardTitle} numberOfLines={2}>{title}</Text>
         <View style={styles.metaRow}>
           <MapPin size={11} color={COLORS.textMuted} />
-          <Text style={styles.metaText} numberOfLines={1}>
-            {issue.locationName || `${issue.latitude.toFixed(3)}, ${issue.longitude.toFixed(3)}`}
-          </Text>
-          {distance !== null && (
-            <Text style={styles.metaDistance}>• {formatDistance(distance)}</Text>
-          )}
+          <Text style={styles.meta} numberOfLines={1}>{location}</Text>
         </View>
-
-        <View style={styles.footerRow}>
-          <Text style={styles.timeText}>{formatRelativeTime(issue.createdAt)}</Text>
-          <View style={styles.confirmBadge}>
-            <Users size={10} color={COLORS.primary} />
-            <Text style={styles.confirmBadgeText}>{issue.confirmationCount || 0}</Text>
+        <View style={styles.footer}>
+          <Text style={styles.time}>{formatRelativeTime(issue.createdAt)}</Text>
+          <View style={styles.confirmations}>
+            <Users size={11} color={COLORS.primary} />
+            <Text style={styles.confirmText}>{issue.confirmationCount || 0}</Text>
           </View>
         </View>
       </View>
@@ -217,142 +133,86 @@ export function CivicIssueCard({
 }
 
 const styles = StyleSheet.create({
-  // Featured Variant
-  featuredCard: {
-    width: SCREEN_WIDTH * 0.72,
-    backgroundColor: '#FFFFFF',
+  mapCard: {
+    width: SCREEN_WIDTH - 36,
+    minHeight: 112,
+    backgroundColor: COLORS.surface,
+    borderRadius: RADIUS.xl,
+    padding: 10,
+    flexDirection: 'row',
+    gap: 12,
+    ...SHADOWS.floating,
+  },
+  mapImage: {
+    width: 82,
+    height: 92,
     borderRadius: RADIUS.md,
-    borderWidth: 1,
-    borderColor: COLORS.border,
+    backgroundColor: COLORS.surfaceHighlight,
+  },
+  mapBody: {
+    flex: 1,
+    justifyContent: 'space-between',
+    paddingVertical: 1,
+  },
+  mapTitle: {
+    color: COLORS.textPrimary,
+    fontSize: 14,
+    lineHeight: 19,
+    fontWeight: '600',
+    letterSpacing: -0.2,
+    marginTop: 3,
+  },
+  featuredCard: {
+    width: SCREEN_WIDTH * 0.74,
+    backgroundColor: COLORS.surface,
+    borderRadius: RADIUS.xl,
     overflow: 'hidden',
     ...SHADOWS.card,
-    marginRight: 12,
-  },
-  featuredImageContainer: {
-    height: 110,
-    position: 'relative',
-    backgroundColor: '#0F172A',
   },
   featuredImage: {
     width: '100%',
-    height: '100%',
+    height: 132,
+    backgroundColor: COLORS.surfaceHighlight,
   },
-  imageOverlayGradient: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    top: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(15, 23, 42, 0.1)',
-  },
-  featuredTopRow: {
-    position: 'absolute',
-    top: 8,
-    left: 8,
-    right: 8,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  featuredDistancePill: {
-    position: 'absolute',
-    bottom: 8,
-    left: 8,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-    backgroundColor: 'rgba(15, 23, 42, 0.75)',
-    paddingHorizontal: 7,
-    paddingVertical: 2,
-    borderRadius: RADIUS.xs,
-  },
-  featuredDistanceText: {
-    color: '#FFFFFF',
-    fontSize: 10,
-    fontWeight: '600',
-  },
-  featuredContent: {
-    padding: 12,
-    gap: 4,
+  featuredBody: {
+    padding: 16,
+    gap: 6,
   },
   featuredTitle: {
-    fontSize: 14,
-    fontWeight: '600',
     color: COLORS.textPrimary,
-    letterSpacing: -0.2,
+    fontSize: 16,
+    lineHeight: 21,
+    fontWeight: '600',
   },
   featuredLocation: {
-    fontSize: 11.5,
-    color: COLORS.textMuted,
-    fontWeight: '400',
+    color: COLORS.textSecondary,
+    fontSize: 12,
   },
-  featuredBottomRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginTop: 6,
-    paddingTop: 6,
-    borderTopWidth: 1,
-    borderTopColor: COLORS.borderLight,
-  },
-
-  // Map Overlay Variant
-  mapOverlayCard: {
-    width: SCREEN_WIDTH - 36,
-    backgroundColor: '#FFFFFF',
-    borderRadius: RADIUS.md,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    flexDirection: 'row',
-    padding: 10,
-    gap: 12,
-    ...SHADOWS.medium,
-  },
-  mapOverlayImage: {
-    width: 78,
-    height: 78,
-    borderRadius: RADIUS.xs,
-    backgroundColor: '#F1F5F9',
-  },
-  mapOverlayBody: {
-    flex: 1,
-    justifyContent: 'space-between',
-  },
-  mapOverlayTitle: {
-    fontSize: 13.5,
-    fontWeight: '600',
-    color: COLORS.textPrimary,
-    letterSpacing: -0.1,
-  },
-
-  // Standard Variant
   standardCard: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: RADIUS.md,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    flexDirection: 'row',
+    backgroundColor: COLORS.surface,
+    borderRadius: RADIUS.lg,
     padding: 10,
-    gap: 10,
+    flexDirection: 'row',
+    gap: 12,
     ...SHADOWS.card,
   },
   standardImage: {
-    width: 72,
-    height: 72,
-    borderRadius: RADIUS.xs,
-    backgroundColor: '#F1F5F9',
+    width: 78,
+    height: 78,
+    borderRadius: RADIUS.md,
+    backgroundColor: COLORS.surfaceHighlight,
   },
-  standardContent: {
+  standardBody: {
     flex: 1,
     justifyContent: 'space-between',
+    paddingVertical: 1,
   },
   standardTitle: {
-    fontSize: 13,
-    fontWeight: '600',
     color: COLORS.textPrimary,
+    fontSize: 14,
+    lineHeight: 19,
+    fontWeight: '600',
   },
-
-  // Common styles
   badgeRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -363,73 +223,60 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 3,
+    paddingHorizontal: 7,
+    paddingVertical: 4,
+    borderRadius: RADIUS.full,
     backgroundColor: COLORS.errorLight,
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: RADIUS.xs,
-    borderWidth: 0.5,
-    borderColor: '#FECACA',
   },
-  urgentPillText: {
+  urgentText: {
+    color: COLORS.error,
     fontSize: 9.5,
     fontWeight: '600',
-    color: COLORS.error,
   },
   metaRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
+    marginTop: 3,
   },
-  metaText: {
-    fontSize: 11,
-    color: COLORS.textMuted,
-    fontWeight: '400',
+  meta: {
     flex: 1,
-  },
-  metaDistance: {
+    color: COLORS.textSecondary,
     fontSize: 11,
-    color: COLORS.textSecondary,
-    fontWeight: '600',
   },
-  distanceBadge: {
-    backgroundColor: '#F1F5F9',
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: RADIUS.xs,
+  distance: {
+    color: COLORS.textMuted,
+    fontSize: 10.5,
+    fontWeight: '500',
   },
-  distanceText: {
-    fontSize: 10,
-    fontWeight: '600',
-    color: COLORS.textSecondary,
-  },
-  footerRow: {
+  footer: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    marginTop: 6,
   },
-  confirmBadge: {
+  confirmations: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
   },
-  confirmBadgeText: {
-    fontSize: 11,
-    fontWeight: '500',
+  confirmText: {
     color: COLORS.textSecondary,
+    fontSize: 10.5,
+    fontWeight: '500',
   },
-  actionLink: {
+  detailsLink: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 2,
+    gap: 1,
   },
-  actionLinkText: {
-    fontSize: 11.5,
-    fontWeight: '600',
+  detailsText: {
     color: COLORS.primary,
+    fontSize: 11,
+    fontWeight: '600',
   },
-  timeText: {
-    fontSize: 10.5,
+  time: {
     color: COLORS.textMuted,
-    fontWeight: '400',
+    fontSize: 10.5,
   },
 });
