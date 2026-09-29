@@ -48,7 +48,10 @@ export function IssuePreviewCard({ issue, userCoords, onPress }: IssuePreviewCar
             </View>
             {distance !== null && <Text style={styles.distance}>· {formatDistance(distance)}</Text>}
           </View>
-          <Text style={styles.action}>View report <ChevronRight size={15} color={COLORS.primary} strokeWidth={2} /></Text>
+          <View style={styles.action}>
+            <Text style={styles.actionText}>View report</Text>
+            <ChevronRight size={15} color={COLORS.primary} strokeWidth={2} />
+          </View>
         </View>
         <Text style={styles.status}>{statusLabel} · {formatRelativeTime(issue.createdAt)}</Text>
       </View>
@@ -64,50 +67,18 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     ...SHADOWS.floating,
   },
-  image: {
-    width: '100%',
-    height: 132,
-    backgroundColor: COLORS.surfaceHighlight,
-  },
-  content: {
-    padding: 18,
-    paddingBottom: 17,
-  },
-  category: {
-    color: COLORS.primaryDark,
-    fontSize: 10,
-    fontWeight: '700',
-    letterSpacing: 1.2,
-    marginBottom: 6,
-  },
-  title: {
-    color: COLORS.textPrimary,
-    fontSize: 18,
-    lineHeight: 23,
-    fontWeight: '500',
-    letterSpacing: -0.2,
-  },
-  locationRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    marginTop: 11,
-  },
-  location: {
-    flex: 1,
-    color: COLORS.textSecondary,
-    fontSize: 12,
-  },
-  bottomRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginTop: 15,
-  },
+  image: { width: '100%', height: 132, backgroundColor: COLORS.surfaceHighlight },
+  content: { padding: 18, paddingBottom: 17 },
+  category: { color: COLORS.primaryDark, fontSize: 10, fontWeight: '700', letterSpacing: 1.2, marginBottom: 6 },
+  title: { color: COLORS.textPrimary, fontSize: 18, lineHeight: 23, fontWeight: '500', letterSpacing: -0.2 },
+  locationRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 11 },
+  location: { flex: 1, color: COLORS.textSecondary, fontSize: 12 },
+  bottomRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 15 },
   metaGroup: { flexDirection: 'row', alignItems: 'center', gap: 6, flexShrink: 1 },
   metaItem: { flexDirection: 'row', alignItems: 'center', gap: 5 },
   metaText: { color: COLORS.textSecondary, fontSize: 11, fontWeight: '500' },
   distance: { color: COLORS.textMuted, fontSize: 11 },
-  action: { flexDirection: 'row', alignItems: 'center', color: COLORS.primaryDark, fontSize: 12, fontWeight: '600' } as any,
+  action: { flexDirection: 'row', alignItems: 'center', gap: 2 },
+  actionText: { color: COLORS.primaryDark, fontSize: 12, fontWeight: '600' },
   status: { color: COLORS.textMuted, fontSize: 10.5, marginTop: 10 },
 });
