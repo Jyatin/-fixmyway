@@ -1,17 +1,11 @@
 import React, { useRef, useImperativeHandle, forwardRef, useCallback } from 'react';
-import {
-  View,
-  FlatList,
-  StyleSheet,
-  Dimensions,
-  ViewToken,
-} from 'react-native';
+import { View, FlatList, StyleSheet, Dimensions, ViewToken } from 'react-native';
 import { CivicIssue } from '@/types/issue';
-import { CivicIssueCard } from '../cards/CivicIssueCard';
+import { IssuePreviewCard } from './IssuePreviewCard';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
-const CARD_WIDTH = SCREEN_WIDTH - 36;
-const CARD_MARGIN = 14;
+const CARD_WIDTH = SCREEN_WIDTH - 40;
+const CARD_MARGIN = 12;
 const SNAP_INTERVAL = CARD_WIDTH + CARD_MARGIN;
 
 export interface MapIssueCarouselRef {
@@ -33,44 +27,23 @@ export const MapIssueCarousel = forwardRef<MapIssueCarouselRef, MapIssueCarousel
     useImperativeHandle(ref, () => ({
       scrollToIssue: (issueId: string) => {
         const index = issues.findIndex((i) => i.id === issueId);
-        if (index !== -1 && flatListRef.current) {
-          flatListRef.current.scrollToIndex({
-            index,
-            animated: true,
-            viewPosition: 0.5,
-          });
-        }
+        if (index !== -1) flatListRef.current?.scrollToIndex({ index, animated: true, viewPosition: 0.5 });
       },
       scrollToIndex: (index: number) => {
-        if (index >= 0 && index < issues.length && flatListRef.current) {
-          flatListRef.current.scrollToIndex({
-            index,
-            animated: true,
-            viewPosition: 0.5,
-          });
-        }
+        if (index >= 0 && index < issues.length) flatListRef.current?.scrollToIndex({ index, animated: true, viewPosition: 0.5 });
       },
     }));
 
     const onViewableItemsChanged = useCallback(
       ({ viewableItems }: { viewableItems: ViewToken[] }) => {
-        if (viewableItems.length > 0 && viewableItems[0].item) {
-          const activeItem = viewableItems[0].item as CivicIssue;
-          if (onActiveIssueChange) {
-            onActiveIssueChange(activeItem);
-          }
-        }
+        const activeItem = viewableItems[0]?.item as CivicIssue | undefined;
+        if (activeItem) onActiveIssueChange?.(activeItem);
       },
       [onActiveIssueChange]
     );
 
-    const viewabilityConfig = useRef({
-      itemVisiblePercentThreshold: 60,
-    }).current;
-
-    if (!issues || issues.length === 0) {
-      return null;
-    }
+    const viewabilityConfig = useRef({ itemVisiblePercentThreshold: 65 }).current;
+    if (!issues?.length) return null;
 
     return (
       <View style={styles.container}>
@@ -88,19 +61,10 @@ export const MapIssueCarousel = forwardRef<MapIssueCarouselRef, MapIssueCarousel
           onViewableItemsChanged={onViewableItemsChanged}
           renderItem={({ item }) => (
             <View style={styles.cardWrapper}>
-              <CivicIssueCard
-                issue={item}
-                userCoords={userCoords}
-                onPress={onPressIssue}
-                variant="mapOverlay"
-              />
+              <IssuePreviewCard issue={item} userCoords={userCoords} onPress={onPressIssue} />
             </View>
           )}
-          getItemLayout={(_, index) => ({
-            length: SNAP_INTERVAL,
-            offset: SNAP_INTERVAL * index,
-            index,
-          })}
+          getItemLayout={(_, index) => ({ length: SNAP_INTERVAL, offset: SNAP_INTERVAL * index, index })}
         />
       </View>
     );
@@ -112,14 +76,12 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 0,
     right: 0,
-    bottom: 84, // Directly above the floating bottom tab bar
+    bottom: 94,
     zIndex: 90,
   },
   contentContainer: {
-    paddingHorizontal: 18,
+    paddingHorizontal: 20,
     gap: CARD_MARGIN,
   },
-  cardWrapper: {
-    width: CARD_WIDTH,
-  },
+  cardWrapper: { width: CARD_WIDTH },
 });
