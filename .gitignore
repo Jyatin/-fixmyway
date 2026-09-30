@@ -56,5 +56,7 @@ scratch/
 
 # Media & Temporary capture artifacts
 *.mp4
+!FixMyWay_LinkedIn_Showcase.mp4
+!FixMyWay_LinkedIn_Showcase_16x9.mp4
 emulator_*.png
 
