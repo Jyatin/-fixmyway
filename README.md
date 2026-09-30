@@ -1,8 +1,16 @@
-# CivicLens
+# FixMyWay — AI-Assisted Civic Issue Reporting App
 
 > **See it. Snap it. Fix it.**
 >
 > A citizen-first civic intelligence platform that transforms real-world observations into structured, location-aware, community-verifiable civic issues.
+
+• Built a React Native + Expo civic reporting platform supporting 5+ civic issue categories, enabling photo-based reporting, GPS location capture, reverse geocoding, and interactive map visualization.
+
+• Implemented 2 intelligent detection mechanisms — AI-assisted image classification and Haversine-based proximity analysis — to automatically categorize reports and identify potential duplicate issues within nearby locations.
+
+• Developed a 3-stage community workflow for issue reporting, verification, and resolution, integrating 3 Firebase services (Authentication, Firestore, Storage) and deploying the Android application through EAS.
+
+**Tech Stack:** React Native, Expo, TypeScript, Firebase, Google Maps, AI/ML, REST APIs
 
 [![React Native](https://img.shields.io/badge/React_Native-0.81.5-61DAFB?logo=react&logoColor=black)](https://reactnative.dev/)
 [![Expo](https://img.shields.io/badge/Expo_SDK-54.0-000020?logo=expo&logoColor=white)](https://expo.dev/)
@@ -15,7 +23,7 @@
 
 ## 📑 Table of Contents
 
-- [Product Demo](#-product-demo)
+- [Product Showcase Video](#-product-showcase-video)
 - [Why CivicLens?](#-why-civiclens)
 - [What Makes CivicLens Different?](#-what-makes-civiclens-different)
 - [Detailed Features](#-detailed-features)
@@ -39,28 +47,27 @@
 
 ---
 
-## 🎥 Product Demo
+## 🎥 Product Showcase Video
 
-A comprehensive **51-second end-to-end product demonstration** showcasing the complete CivicLens mobile experience is available in the repository root:
+A complete **83-second silent end-to-end product showcase** demonstrating the real running FixMyWay mobile application on Google Pixel 7:
 
-* **File:** [`CivicLens_Product_Demo.mp4`](CivicLens_Product_Demo.mp4)
-* **Capture Source:** Google Pixel 7 Android Emulator (Android 14 / API 34)
-* **Viewport Resolution:** Native **1080 × 2400** vertical viewport (9:20 aspect ratio)
-* **Framing:** Pure mobile device screen capture via Android ADB hardware framebuffer — zero IDE, taskbar, browser tabs, or emulator window chrome visible
-* **Subtitles:** Floating high-contrast status overlays burned directly into the stream, guiding the viewer through each screen
+* 📱 **Vertical 9:16 (LinkedIn Mobile / Shorts):** [`FixMyWay_LinkedIn_Showcase.mp4`](FixMyWay_LinkedIn_Showcase.mp4) | [Direct Download](https://raw.githubusercontent.com/Jyatin/-fixmyway/main/FixMyWay_LinkedIn_Showcase.mp4)
+* 🖥️ **Landscape 16:9 (Desktop / Web Demo):** [`FixMyWay_LinkedIn_Showcase_16x9.mp4`](FixMyWay_LinkedIn_Showcase_16x9.mp4) | [Direct Download](https://raw.githubusercontent.com/Jyatin/-fixmyway/main/FixMyWay_LinkedIn_Showcase_16x9.mp4)
+* **Capture Source:** Real running Google Pixel 7 Android Emulator (Android 14 / API 34)
+* **Audio:** 100% Silent
+* **Subtitles:** Clean, burned-in status guides highlighting key workflows
 
 ```
-00:00 - 00:06  Live Civic Issue Map (Interactive map, search bar, active status counters, and floating incident card)
-00:06 - 00:15  View Issue Details (Priority rating 59/100, AI intel, impact timeline, citizen confirmations)
-00:15 - 00:23  Capture Evidence & Report (Photo picker, category selector, severity gauge, GPS telemetry)
-00:23 - 00:32  District Telemetry & Spotdex (56% Health Index, AQI 110 telemetry, rainfall & noise tracking)
-00:32 - 00:38  Civic Logbook (Active & Resolved status filters, complete personal report tracking)
-00:38 - 00:44  Leaderboard & Trust (Top citizen rankings, podium standings, trust ratings)
-00:44 - 00:48  Citizen Profile & Badges (Contribution heatmap, unlockable achievements, verified level)
-00:48 - 00:51  Return to Live Map (Clean overview with 3-second closing hold)
+00:00 - 00:08  Brand Intro & App Cold Start into Live Dashboard
+00:08 - 00:21  Geospatial Hazard Map & Dynamic Category Filtering
+00:21 - 00:34  Deep-Dive Incident Inspection, 92/100 Risk Score & Audit Trail
+00:34 - 00:49  3-Step Citizen Report Flow: Category -> GPS -> Photo Evidence
+00:49 - 01:00  Spotdex District Telemetry: 68% Health Index, AQI 160 & Rainfall Tracker
+01:00 - 01:12  Civic Profile & Proof-of-Action Achievement Badges
+01:12 - 01:23  Tech Stack & Credits (Built by Jyatin Kumar Singh)
 ```
 
-> **Demo Video Link:** Download or inspect [`CivicLens_Product_Demo.mp4`](CivicLens_Product_Demo.mp4) directly in your local workspace or video player.
+> **Demo Video Link:** Download or inspect [`FixMyWay_LinkedIn_Showcase.mp4`](FixMyWay_LinkedIn_Showcase.mp4) directly in your local workspace or video player.
 
 ---
 
