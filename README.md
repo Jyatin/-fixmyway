@@ -31,16 +31,13 @@ Photo → Optimization → Gemini Vision → Category / Severity / Dimensions �
 
 ```mermaid
 flowchart LR
-    A[Capture Issue] --> B[GPS + AI Analysis]
+    A[Capture] --> B[GPS + AI]
     B --> C[Duplicate Check]
-    C --> D{Nearby Issue?}
-    D -->|Yes| E[Existing Issue]
-    D -->|No| F[Citizen Submits]
-    E --> F
-    F --> G[Firebase]
-    G --> H[Live Civic Map]
-    H --> I[Community Verification]
-    I --> J[Track & Resolve]
+    C --> D[Submit]
+    D --> E[Firebase]
+    E --> F[Live Map]
+    F --> G[Community Verify]
+    G --> H[Track & Resolve]
 ```
 
 ## 🏗️ Architecture
