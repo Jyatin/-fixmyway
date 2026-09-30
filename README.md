@@ -47,56 +47,33 @@ The AI is **assistive**: users review and can modify the suggested category, sev
 
 ```mermaid
 flowchart TD
-    A([Citizen Observes Hazard]) --> B[Capture Photo Evidence]
-    B --> C[Fetch GPS & Reverse Geocode]
-    B --> D[Gemini Vision Analysis]
-    D --> E{Valid Civic Hazard?}
-    E -- No --> F[Retake / Review]
-    E -- Yes --> G[Category + Severity + Dimensions]
-    C --> H[Haversine Duplicate Scan]
-    G --> H
-    H --> I{Duplicate Nearby?}
-    I -- Yes --> J[Show Existing Issue]
-    I -- No --> K[Citizen Confirms & Submits]
-    J --> K
-    K --> L[(Firebase Firestore + Storage)]
-    L --> M[Live Civic Map]
-    M --> N[Community Verification]
-    N --> O[Priority & Tracking]
-    O --> P[Resolution Proof]
-    P --> Q([Issue Resolved])
+    A([Citizen Observes Hazard]) --> B[Capture Photo]
+    B --> C[GPS + Reverse Geocode]
+    B --> D[Gemini Vision]
+    D --> E[Category + Severity + Dimensions]
+    C --> F[Haversine Duplicate Check]
+    E --> F
+    F --> G{Duplicate?}
+    G -- Yes --> H[Review Existing Issue]
+    G -- No --> I[Citizen Confirms & Submits]
+    H --> I
+    I --> J[(Firebase)]
+    J --> K[Live Civic Map]
+    K --> L[Community Verification]
+    L --> M[Tracking & Resolution]
 ```
 
 ## 🏗️ Architecture
 
 ```mermaid
-graph TB
-    subgraph Client["Client — Expo / React Native"]
-        UI[UI & Screens]
-        Router[Expo Router]
-        Context[AuthContext + IssuesContext]
-    end
-
-    subgraph Services["Application Services"]
-        AI[Gemini Vision]
-        Geo[GPS + Haversine]
-        Issues[Issue Service]
-        Game[Gamification]
-        AQI[Air Quality]
-    end
-
-    subgraph Cloud["Cloud & External Services"]
-        Auth[Firebase Auth]
-        DB[(Firestore)]
-        Storage[(Firebase Storage)]
-        Maps[Google Maps]
-        Env[Open-Meteo / WAQI]
-    end
-
-    UI --> Router --> Context
-    Context --> Services
-    Services --> Cloud
+graph LR
+    UI[React Native UI] --> State[Expo Router + Context]
+    State --> Services[Application Services]
+    Services --> Cloud[Firebase]
+    Services --> External[Gemini • Google Maps • Open-Meteo/WAQI]
 ```
+
+**Flow:** UI → navigation/state → business services → cloud and external APIs.
 
 ## 🛠️ Tech Stack
 
