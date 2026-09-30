@@ -30,14 +30,17 @@ Photo → Optimization → Gemini Vision → Category / Severity / Dimensions �
 ## 🔄 End-to-End Workflow
 
 ```mermaid
-flowchart LR
-    A[Capture] --> B[GPS + AI]
-    B --> C[Duplicate Check]
-    C --> D[Submit]
-    D --> E[Firebase]
-    E --> F[Live Map]
-    F --> G[Community Verify]
-    G --> H[Track & Resolve]
+flowchart TD
+    A[Capture Issue]
+    B[GPS + AI Analysis]
+    C[Duplicate Check]
+    D[Submit Report]
+    E[Firebase]
+    F[Live Civic Map]
+    G[Community Verification]
+    H[Track & Resolve]
+
+    A --> B --> C --> D --> E --> F --> G --> H
 ```
 
 ## 🏗️ Architecture
